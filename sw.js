@@ -1,18 +1,10 @@
-
-const CACHE = "falcon-mess-tracker-v2";
-
-const FILES = [
-  "./",
-  "./index.html",
-  "./app.js",
-  "./manifest.webmanifest",
-  "./icon.svg"
-];
+const CACHE_NAME = "falcon-mess-tracker-v3";
+const CORE_FILES = ["./", "./index.html", "./app.js?v=3", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE)
-      .then(cache => cache.addAll(FILES))
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(CORE_FILES))
       .then(() => self.skipWaiting())
   );
 });
@@ -20,22 +12,22 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
-      .then(keys =>
-        Promise.all(
-          keys
-            .filter(key => key !== CACHE)
-            .map(key => caches.delete(key))
-        )
-      )
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
 
+// Network-first: GitHub Pages updates are preferred; cache is only a fallback.
 self.addEventListener("fetch", event => {
-  if (event.request.method === "GET") {
-    event.respondWith(
-      caches.match(event.request)
-        .then(response => response || fetch(event.request))
-    );
-  }
+  const request = event.request;
+  if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
+  event.respondWith(
+    fetch(request).then(response => {
+      if (response && response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+      }
+      return response;
+    }).catch(() => caches.match(request).then(cached => cached || caches.match("./index.html")))
+  );
 });
