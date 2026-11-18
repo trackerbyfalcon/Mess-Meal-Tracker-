@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="Mess Meal Tracker by Falcon">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Mess Meal Tracker</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#172033;--muted:#aab5c5;--line:#2b374b;--gold:#d6ae45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f8fafc;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:720px;margin:auto;padding:16px 14px 40px}
+header{background:#111827;border-radius:20px;padding:22px 16px;text-align:center;margin-bottom:18px}
+h1{font-size:25px;margin:0 0 6px}header p{margin:0 0 8px;color:#cbd5e1;font-size:13px}.credit{color:var(--gold);font-size:13px;font-weight:600}
+h2{font-size:17px;margin:20px 0 10px}.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.stat{border-radius:13px;padding:13px 7px;text-align:center;min-width:0}.stat strong{display:block;font-size:27px;margin:5px 0}.stat span{font-size:11px;font-weight:650}.stat small{display:block;color:#c4c4c4;font-size:11px}
+.green{background:#12351f}.blue{background:#102a45}.orange{background:#40250e}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin:10px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+input,select,button{font:inherit}input,select{width:100%;background:#0d1626;border:1px solid #3b4960;color:#fff;border-radius:10px;padding:11px}
+button{border:0;border-radius:10px;padding:11px 13px;background:#334155;color:#fff;font-weight:650;cursor:pointer}
+button.primary{background:#16803d}button.danger{background:transparent;color:#f87171;padding:6px}
+button:disabled,input:disabled,select:disabled{opacity:.55;cursor:not-allowed}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.deposit-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-weight:700}
+.day{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px;margin:9px 0}
+.daytop,.dayfoot{display:flex;justify-content:space-between;align-items:center;gap:8px}.daytop{margin-bottom:10px;font-weight:700}
+.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.choices button{padding:10px 3px;font-size:12px;background:#263449}
+.choices button.active{background:#2563eb;outline:1px solid #93c5fd}
+.dayfoot{margin-top:8px;color:var(--muted);font-size:12px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.result{text-align:center;padding:18px}.result strong{font-size:32px;display:block;margin:8px}.refund{color:#4ade80}.due{color:#f87171}
+.muted{color:var(--muted);font-size:12px;line-height:1.5}.full{width:100%;margin-top:8px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 0 4px}
+@media(max-width:380px){.choices button{font-size:11px}.stat strong{font-size:23px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>🍽️ Mess Meal Tracker</h1>
+<p>Monthly Meal &amp; Deposit Management</p>
+<div class="credit">✦ Created by Falcon</div>
+</header>
+
+<section>
+<label for="month">Select Month</label>
+<input id="month" type="month">
+</section>
+
+<h2>Main Dashboard</h2>
+<div class="dashboard">
+<div class="stat green"><span>Total Available</span><strong id="available">0</strong><small>Meals</small></div>
+<div class="stat blue"><span>Meals Consumed</span><strong id="consumed">0</strong><small>Meals</small></div>
+<div class="stat orange"><span>Remaining</span><strong id="remaining">0</strong><small>Meals</small></div>
+</div>
+
+<h2>Charge Settings</h2>
+<div class="panel grid2">
+<div><label for="rate">Price Per Meal (₹)</label><input id="rate" type="number" min="1" value="50"></div>
+<div><label for="cook">Cook Charge (₹)</label><input id="cook" type="number" min="0" value="230"></div>
+</div>
+
+<div class="section-head"><h2>Deposit History</h2><button id="addDeposit">＋ Add Deposit</button></div>
+<div id="deposits"></div>
+
+<h2>Daily Meal Entry</h2>
+<p class="muted">Morning meal = 1 | Night meal = 1 | Both = 2 | Off = 0</p>
+<div id="days"></div>
+
+<hr>
+<h2>Final Month-End Result</h2>
+<div class="panel result" id="settlement">
+<div class="muted">After the last day of the month, calculate your final balance here.</div>
+<button class="primary full" id="settle">Calculate Final Result</button>
+</div>
+<button class="full" id="report">View / Copy Monthly Report</button>
+<div id="reportArea" class="panel" hidden></div>
+<footer>Mess Meal Tracker</footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
